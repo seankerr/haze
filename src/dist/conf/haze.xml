@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<haze>
+    <nodes>
+        <node name="echo-node"
+              class="io.haze.example.echo.EchoNode"/>
+    </nodes>
+    <transports>
+        <transport name="web-socket-transport">
+            <server class="io.haze.transport.tcp.TCPTransportServer">
+                <port>10000</port>
+            </server>
+            <pipeline class="io.haze.transport.tcp.websocket.WebSocketChannelPipelineInitializer"/>
+        </transport>
+        <transport name="tcp-socket-transport">
+            <server class="io.haze.transport.tcp.TCPTransportServer">
+                <port>11000</port>
+            </server>
+        </transport>
+        <transport name="udp-socket-transport">
+            <server class="io.haze.transport.udp.UDPTransportServer">
+                <port>12000</port>
+            </server>
+        </transport>
+    </transports>
+</haze>

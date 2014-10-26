@@ -1,0 +1,52 @@
+apply plugin: "java"
+apply plugin: "checkstyle"
+
+version = "0.1"
+
+libraries = ["ch.qos.logback:logback-classic:1.0.13",
+             "commons-configuration:commons-configuration:1.9",
+             "io.netty:netty-all:4.0.6.Final",
+             "org.jboss.apiviz:apiviz:1.3.2.GA",
+             "org.slf4j:slf4j-api:1.7.5"]
+
+dependencies {
+    compile libraries
+}
+
+repositories {
+    mavenCentral()
+}
+
+checkstyle.configFile = new File("src/config/checkstyle.xml")
+
+// ---------------------------------------------------------------------------------------------------------------------
+// TASKS
+// ---------------------------------------------------------------------------------------------------------------------
+
+task copyDeps (type: Copy, dependsOn: jar) {
+    from configurations.runtime
+    into "$buildDir/install/lib/dependency"
+}
+
+task copyJar (type: Copy, dependsOn: copyDeps) {
+    from "$buildDir/libs"
+    into "$buildDir/install/lib"
+}
+
+task copyDist (type: Copy, dependsOn: copyJar) {
+    from "src/dist"
+    into "$buildDir/install"
+}
+
+task zip (type: Zip, dependsOn: copyDist) {
+    archiveName "${archivesBaseName}-${version}.zip"
+    from "$buildDir/install"
+}
+
+task docs (type: Javadoc) {
+    classpath          = configurations.compile
+    destinationDir     = file("${buildDir}/install/doc/")
+    source             = sourceSets.main.allJava
+    options.doclet     = "org.jboss.apiviz.APIviz"
+    options.docletpath = configurations.runtime as List
+}
